@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build KeyPilot.app
+        run: make bundle
+
+      - name: Zip app bundle
+        run: zip -r KeyPilot.app.zip KeyPilot.app
+
+      - name: Generate release tag
+        id: tag
+        run: |
+          TAG="build-$(date -u +%Y%m%d-%H%M%S)-$(git rev-parse --short HEAD)"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Generated tag: $TAG"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: KeyPilot ${{ steps.tag.outputs.tag }}
+          body: |
+            Automated build from commit ${{ github.sha }}.
+
+            **Commit:** [`${{ github.sha }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
+          files: KeyPilot.app.zip
