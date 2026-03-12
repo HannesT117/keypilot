@@ -13,6 +13,18 @@ KeyPilot is a macOS menu bar app that lets you instantly switch to any applicati
 
 Open **Settings** from the menu bar icon to view, edit, or remove assignments.
 
+## Permissions
+
+KeyPilot requires **Accessibility access** to intercept global keyboard shortcuts.
+
+On first launch, macOS will prompt you to grant this. If the prompt doesn't appear:
+
+1. Open **System Settings** → **Privacy & Security** → **Accessibility**
+2. Click **+** and add `KeyPilot.app`
+3. Restart KeyPilot
+
+Without this permission, keyboard shortcuts will not work.
+
 ## Installation
 
 Download the latest `KeyPilot.app.zip` from the [Releases](../../releases) page, unzip it, and drag `KeyPilot.app` into your `/Applications` folder.
