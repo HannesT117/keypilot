@@ -14,24 +14,28 @@ jobs:
       - name: Check for releasable commits
         id: check
         run: |
-          DOMINATED='(docs|chore|style|ci):'
-          DOMINATED_COUNT=0
+          HOUSEKEEPING='^(docs|chore|style|ci):'
+          HOUSEKEEPING_COUNT=0
           TOTAL=0
-          while IFS= read -r msg; do
+          # Use ||| as delimiter so multi-line commit bodies don't split into
+          # extra entries. Only the subject line (before the first newline) of
+          # each commit is checked.
+          joined='${{ join(github.event.commits.*.message, '|||') }}'
+          IFS='|||' read -ra MESSAGES <<< "$joined"
+          for msg in "${MESSAGES[@]}"; do
+            subject=$(printf '%s' "$msg" | head -n1)
+            [ -z "$subject" ] && continue
             TOTAL=$((TOTAL + 1))
-            if echo "$msg" | grep -qE "^$DOMINATED"; then
-              DOMINATED_COUNT=$((DOMINATED_COUNT + 1))
+            if echo "$subject" | grep -qE "$HOUSEKEEPING"; then
+              HOUSEKEEPING_COUNT=$((HOUSEKEEPING_COUNT + 1))
             fi
-          done <<'COMMITS'
-          ${{ join(github.event.commits.*.message, '
-          ') }}
-          COMMITS
-          if [ "$TOTAL" -eq "$DOMINATED_COUNT" ]; then
+          done
+          if [ "$TOTAL" -eq "$HOUSEKEEPING_COUNT" ]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
             echo "All $TOTAL commit(s) are housekeeping — skipping release"
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
-            echo "Found releasable commits ($((TOTAL - DOMINATED_COUNT))/$TOTAL)"
+            echo "Found releasable commits ($((TOTAL - HOUSEKEEPING_COUNT))/$TOTAL)"
           fi
 
       - name: Checkout
