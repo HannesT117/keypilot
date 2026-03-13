@@ -1,16 +1,2 @@
-# Build outputs
-/KeyPilot
-/KeyPilot.app/
-*.iconset/
-*.dSYM.zip
-*.dSYM
-
-# Generated Xcode project (regenerate with xcodegen)
-*.xcodeproj/
-xcuserdata/
-
-# Swift Package Manager
-.build/
-
 # macOS
 .DS_Store

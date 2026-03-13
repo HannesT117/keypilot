@@ -1,0 +1,13 @@
+# Build outputs
+/KeyPilot
+/KeyPilot.app/
+*.iconset/
+*.dSYM.zip
+*.dSYM
+
+# Generated Xcode project
+*.xcodeproj/
+xcuserdata/
+
+# Swift Package Manager
+.build/

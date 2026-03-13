@@ -1,44 +1,35 @@
 # CLAUDE.md
 
-## Project
+## Repo layout
 
-KeyPilot is a macOS menu bar app for keyboard-driven app switching (Right ⌘ + letter). Native Swift, no Xcode project — built with `swiftc` via Makefile.
+This is a monorepo for small macOS tools built with AI. Each tool lives in its own subdirectory.
 
-## Build
+| Directory | Tool |
+|-----------|------|
+| `keypilot/` | KeyPilot — keyboard-driven app switcher |
 
-```sh
-make bundle   # compile + assemble .app (no signing)
-make sign     # compile + assemble + ad-hoc codesign (for distribution)
-make run      # bundle + open
-make clean    # remove build artifacts
-```
+## Adding a new tool
 
-- Target: `$(uname -m)-apple-macosx13.0` (arm64 on Apple Silicon)
-- SDK resolved dynamically via `xcrun --show-sdk-path`
-- No Xcode project, no Package.swift — just `swiftc` with framework flags
+1. Create a `<toolname>/` subdirectory with its own `CLAUDE.md`, `Makefile`, and source files.
+2. Add a workflow at `.github/workflows/<toolname>.yml` path-filtered to `<toolname>/**`.
+3. Document the tool in the root `README.md`.
 
-## CI/CD
+## CI convention
 
-- `.github/workflows/release.yml`: builds and releases `KeyPilot.app.zip` on push to main
-- **Skipped scopes:** commits starting with `docs:`, `chore:`, `style:`, or `ci:` do not trigger a release
-- Uses `softprops/action-gh-release@v2` with auto-generated build tags (`build-YYYYMMDD-HHMMSS-<sha>`)
+Each tool has its own workflow file (`.github/workflows/<toolname>.yml`) that triggers only on
+changes inside that tool's subdirectory (`paths: ['<toolname>/**']`).
 
-## Conventions
+## Commit scope convention
 
-- Commit messages use [Conventional Commits](https://www.conventionalcommits.org/) scopes: `feat:`, `fix:`, `docs:`, `chore:`, `ci:`, `style:`, `refactor:`
-- Only `feat:`, `fix:`, and `refactor:` scopes trigger a new release build
-- No tests (yet) — app requires Accessibility permission and global event taps, making automated testing non-trivial
+All commits use the tool name as the conventional commit scope:
+`feat(keypilot): ...`, `fix(keypilot): ...`, `ci(keypilot): ...`
 
-## Code structure
+Repo-level changes (e.g., root README, CLAUDE.md) use no scope: `chore: ...`, `docs: ...`
 
-All source in `Sources/KeyPilot/`:
+## Per-tool instructions
 
-| File | Responsibility |
-|------|---------------|
-| `KeyPilotApp.swift` | SwiftUI entry point, menu bar UI |
-| `AppDelegate.swift` | Lifecycle, event interceptor init/teardown |
-| `KeyInterceptor.swift` | CGEventTap for global keyboard capture |
-| `AppSwitcher.swift` | App switching/launching logic |
-| `AppMapping.swift` | Persistent key→app mappings (UserDefaults) |
-| `SettingsView.swift` | SwiftUI settings UI |
-| `PermissionHelper.swift` | Accessibility permission helpers |
+For build commands and code structure, read the `CLAUDE.md` inside the tool's subdirectory.
+
+## Tool CLAUDE.md imports
+
+@keypilot/CLAUDE.md
