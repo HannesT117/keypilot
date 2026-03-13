@@ -112,6 +112,10 @@ Repo-level changes (e.g., root README, CLAUDE.md) use no scope: `chore: ...`, `d
 ## Per-tool instructions
 
 For build commands and code structure, read the `CLAUDE.md` inside the tool's subdirectory.
+
+## Tool CLAUDE.md imports
+
+@keypilot/CLAUDE.md
 ```
 
 ## CI/CD Pipeline
